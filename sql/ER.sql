@@ -1,0 +1,108 @@
+CREATE TABLE ROLES (
+	id_rol INT IDENTITY(1,1) PRIMARY KEY,
+	nombre VARCHAR(25) UNIQUE NOT NULL
+);
+
+CREATE TABLE CLIENTES (
+	id_cliente INT IDENTITY(1,1) PRIMARY KEY,
+	dpi CHAR(13) UNIQUE NOT NULL,
+	nombres VARCHAR(100) NOT NULL,
+	apellidos VARCHAR(100) NOT NULL,
+	correo VARCHAR(255) UNIQUE NOT NULL,
+	activo BIT NOT NULL DEFAULT 1,
+);
+
+CREATE TABLE TIPOS_CUENTA (
+	id_tipo INT IDENTITY(1,1) PRIMARY KEY,	
+	nombre VARCHAR(100) UNIQUE NOT NULL
+);
+
+CREATE TABLE ESTADOS_CUENTA (
+	id_estado INT IDENTITY(1,1) PRIMARY KEY,	
+	nombre VARCHAR(100) UNIQUE NOT NULL
+);
+
+CREATE TABLE USUARIOS (
+	id_usuario INT IDENTITY(1,1) PRIMARY KEY,
+	id_rol INT NOT NULL,
+	username VARCHAR(50) UNIQUE NOT NULL,
+	password_hash VARCHAR(255) NOT NULL,
+	activo BIT NOT NULL DEFAULT 1,
+
+	FOREIGN KEY (id_rol)
+		REFERENCES ROLES(id_rol)
+);
+
+CREATE TABLE CUENTAS (
+	id_cuenta INT IDENTITY(1,1) PRIMARY KEY,
+	id_cliente INT NOT NULL,
+	id_tipo INT NOT NULL,
+	id_estado INT NOT NULL,
+	numero_cuenta VARCHAR(20) UNIQUE NOT NULL,
+	saldo DECIMAL(18,2) NOT NULL DEFAULT 0,
+
+	FOREIGN KEY (id_cliente)
+		REFERENCES CLIENTES(id_cliente),
+
+	FOREIGN KEY (id_tipo)
+		REFERENCES TIPOS_CUENTA(id_tipo),
+
+	FOREIGN KEY (id_estado)
+		REFERENCES ESTADOS_CUENTA(id_estado),
+
+	CONSTRAINT CK_Cuentas_Saldo
+		CHECK (saldo >= 0)
+);
+
+CREATE TABLE TRANSACCIONES (
+	id_transaccion INT IDENTITY(1,1) PRIMARY KEY,
+	id_usuario INT NOT NULL,
+	monto DECIMAL(18,2) NOT NULL,
+	referencia VARCHAR(100) NOT NULL,
+	idempotency_key UNIQUEIDENTIFIER NOT NULL,
+	fecha_utc DATETIME2(3) NOT NULL DEFAULT SYSUTCDATETIME(),
+
+	FOREIGN KEY (id_usuario)
+		REFERENCES USUARIOS(id_usuario),
+
+	CONSTRAINT CK_Transacciones_Monto
+		CHECK (monto > 0),
+	
+	CONSTRAINT UQ_Transacciones_Idempotency
+		UNIQUE (idempotency_key)
+);
+
+CREATE TABLE AUDITORIA(
+	id_auditoria INT IDENTITY(1,1) PRIMARY KEY,
+	id_usuario INT NOT NULL,
+	accion VARCHAR(255) NOT NULL,
+	entidad VARCHAR(100) NOT NULL,
+	fecha_utc DATETIME2(3) NOT NULL DEFAULT SYSUTCDATETIME(),
+
+	FOREIGN KEY (id_usuario)
+		REFERENCES USUARIOS(id_usuario)
+);
+
+CREATE TABLE MOVIMIENTOS (
+	id_movimiento INT IDENTITY (1,1) PRIMARY KEY,
+	id_transaccion INT NOT NULL,
+	id_cuenta INT NOT NULL,
+	naturaleza VARCHAR(10) NOT NULL,
+	monto DECIMAL(18,2) NOT NULL,
+	saldo_restante DECIMAL(18,2) NOT NULL,
+
+	FOREIGN KEY (id_transaccion)
+		REFERENCES TRANSACCIONES(id_transaccion),
+
+	FOREIGN KEY (id_cuenta)
+		REFERENCES CUENTAS(id_cuenta),
+
+	CONSTRAINT CK_Movimientos_Naturaleza
+		CHECK (naturaleza IN ('DEBITO', 'CREDITO')),
+
+	CONSTRAINT CK_Movimientos_Monto
+		CHECK (monto > 0),
+
+	CONSTRAINT CK_Movimientos_Saldo
+		CHECK (saldo_restante >= 0)
+);
