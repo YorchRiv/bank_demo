@@ -1,5 +1,8 @@
 package com.jmejicanos.prueba.cliente;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Email;
 
 @Entity
 @Table(name = "CLIENTES")
@@ -11,19 +14,25 @@ public class Cliente {
     private Integer id;
     
     @Column(name = "dpi")
+    @NotBlank(message =  "El DPI es obligatorio")
     private String dpi;
     
     @Column(name = "nombres")
+    @NotBlank(message =  "El nombre es obligatorio")
     private String nombres;
     
     @Column(name = "apellidos")
+    @NotBlank(message =  "El apellido es obligatorio")
     private String apellidos;
     
     @Column(name = "correo")
+    @NotBlank(message =  "El correo es obligatorio")
+    @Email(message =  "El formato del correo no es valido")
     private String correo;
     
-    @Column(name = "activo")
-    private String activo;
+    @Column(name = "activo")    
+    @NotNull(message =  "El campo activo es obligatorio")
+    private Boolean activo;
     
     public Cliente(){
     }
@@ -68,11 +77,11 @@ public class Cliente {
         this.correo = correo;
     }
 
-    public String getActivo() {
+    public Boolean getActivo() {
         return activo;
     }
 
-    public void setActivo(String activo) {
+    public void setActivo(Boolean activo) {
         this.activo = activo;
     }    
 }

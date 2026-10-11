@@ -1,13 +1,19 @@
 package com.jmejicanos.prueba.cliente;
 
+import jakarta.validation.Valid;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -22,12 +28,7 @@ public class ClienteController {
     
     @GetMapping("/clientes")
     public List<Cliente> obtenerClientes() {
-        try {
-            return service.obtenerClientes();
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw e;
-        }
+        return service.obtenerClientes();        
     }
     
     @GetMapping("/clientes/{id}")
@@ -39,5 +40,25 @@ public class ClienteController {
         else {
             return ResponseEntity.status(404).body(Map.of("error:","Cliente no encontrado"));
         }
+    }
+    
+    @PostMapping("/clientes")
+    public ResponseEntity<?> crearCliente(@Valid @RequestBody Cliente nuevoCliente){       
+        try{
+            Cliente clienteGuardado = service.crearCliente(nuevoCliente);
+            return ResponseEntity.status(HttpStatus.CREATED).body(clienteGuardado);
+        } catch (IllegalArgumentException e){
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(Map.of("mensaje:",e.getMessage()));
+        } catch (Exception e) {
+            e.printStackTrace();;
+            return ResponseEntity.internalServerError().body(Map.of("mensaje:","Error Interno del Servidor","error:",e.getMessage()));
+        }
+        
+    }
+    
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<?> manejarValidacion(MethodArgumentNotValidException e){
+        String mensaje = e.getBindingResult().getFieldErrors().get(0).getDefaultMessage();
+        return ResponseEntity.badRequest().body(Map.of("mensaje:",mensaje));
     }
 }
