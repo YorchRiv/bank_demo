@@ -25,33 +25,3 @@ public class ConexionSQLServer implements CommandLineRunner {
         System.out.println("Resultado SQL: " + resultado);
     }
 }
-
-
-
-
-
-
-/*package com.jmejicanos.prueba.test;
-
-import java.sql.Connection;
-import java.sql.DriverManager;
-import javax.swing.JOptionPane;
-
-public class ConexionSQLServer {
-    Connection conexion = null;
-    
-    String usuario = "sa";
-    String contrasena = "serverSQL";
-    String db = "bankCore";
-    String puerto = "1433";
-    
-    public String obtenerConexion() {
-        try{
-            String cadena = "jdbc:sqlserver://localhost:1433;databaseName=bankCore;encrypt=true;trustServerCertificate=true";
-            conexion = DriverManager.getConnection(cadena, usuario, contrasena); 
-            return "Hola conexion exitosa";
-        } catch (Exception e) {
-            return "nel: "+e;
-        }      
-    }
-}*/
