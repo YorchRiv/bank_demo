@@ -14,7 +14,7 @@ public class ApiController {
     
     @GetMapping("/hola")
     public String hola(){
-        return "Hola Jorge xd";
+        return "Hola";
     }
     
     @PostMapping("/nombre")
