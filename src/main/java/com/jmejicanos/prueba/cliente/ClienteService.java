@@ -4,7 +4,9 @@ import jakarta.validation.Validator;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 @Service
 public class ClienteService {
@@ -87,4 +89,14 @@ public class ClienteService {
     }
     
     //Eliminar Cliente
+    public void eliminarCliente(Integer idCliente){
+        Cliente cliente = repository.findById(idCliente).orElseThrow(() -> new IllegalArgumentException("El cliente no existe"));
+        
+        if(Boolean.FALSE.equals(cliente.getActivo())){
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "El cliente ya se encuentra inactivo");
+        }
+        
+        cliente.setActivo(false);
+        repository.save(cliente);
+    }
 }

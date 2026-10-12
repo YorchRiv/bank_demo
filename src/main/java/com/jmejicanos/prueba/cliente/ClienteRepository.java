@@ -8,8 +8,7 @@ public interface ClienteRepository extends JpaRepository<Cliente, Integer> {
     
     //Clientes
     boolean existsByDpi(String dpi); //Existe DPI
-    boolean existsByCorreo(String correo); //Existe Correo
-    
-    boolean existsByDpiAndIdNot(String dpi, Integer idCliente);
-    boolean existsByCorreoAndIdNot(String correo, Integer idCliente);
+    boolean existsByCorreo(String correo); //Existe Correo   
+    boolean existsByDpiAndIdNot(String dpi, Integer idCliente); //DPI Existente diferente al de ID
+    boolean existsByCorreoAndIdNot(String correo, Integer idCliente); //Correo existente diferente al de ID
 }

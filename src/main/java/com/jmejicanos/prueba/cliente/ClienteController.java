@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -71,6 +72,20 @@ public class ClienteController {
             return ResponseEntity.internalServerError().body(Map.of("mensaje:","Ocurrio un error inesperado","error:",e.getMessage()));
         }
     }
+    
+    @DeleteMapping("clientes/{id}")
+    public ResponseEntity<?> eliminarCliente(@PathVariable Integer id){
+        try{
+            service.eliminarCliente(id);
+            return ResponseEntity.ok(Map.of("mensaje:","Cliente eliminado correctamente"));       
+        } catch (IllegalStateException e){
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(Map.of("mensaje", e.getMessage()));
+        } catch (Exception e) {
+            e.printStackTrace();;
+            return ResponseEntity.internalServerError().body(Map.of("mensaje:","Ocurrio un error inesperado","error:",e.getMessage()));
+        }
+    }
+    
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<?> manejarValidacion(MethodArgumentNotValidException e){
         String mensaje = e.getBindingResult().getFieldErrors().get(0).getDefaultMessage();
