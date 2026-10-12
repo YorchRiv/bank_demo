@@ -3,6 +3,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.Size;
 
 @Entity
 @Table(name = "CLIENTES")
@@ -15,6 +16,7 @@ public class Cliente {
     
     @Column(name = "dpi")
     @NotBlank(message =  "El DPI es obligatorio")
+    @Size(min = 13, max = 13, message = "El DPI debe contener exactamente 13 caracteres")
     private String dpi;
     
     @Column(name = "nombres")

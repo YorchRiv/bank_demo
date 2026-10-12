@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -51,11 +52,25 @@ public class ClienteController {
             return ResponseEntity.status(HttpStatus.CONFLICT).body(Map.of("mensaje:",e.getMessage()));
         } catch (Exception e) {
             e.printStackTrace();;
-            return ResponseEntity.internalServerError().body(Map.of("mensaje:","Error Interno del Servidor","error:",e.getMessage()));
+            return ResponseEntity.internalServerError().body(Map.of("mensaje:","Ocurrio un error inesperado","error:",e.getMessage()));
         }
         
     }
     
+    @PatchMapping("/clientes/{id}")
+    public ResponseEntity<?> actualizarCliente(@PathVariable Integer id, @RequestBody Cliente datosActualizados){       
+        try{
+            Cliente cliente = service.actualizarCliente(id, datosActualizados);
+            return ResponseEntity.ok(cliente);       
+        } catch (IllegalStateException e){
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(Map.of("mensaje", e.getMessage()));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("mensaje", e.getMessage()));
+        } catch (Exception e) {
+            e.printStackTrace();;
+            return ResponseEntity.internalServerError().body(Map.of("mensaje:","Ocurrio un error inesperado","error:",e.getMessage()));
+        }
+    }
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<?> manejarValidacion(MethodArgumentNotValidException e){
         String mensaje = e.getBindingResult().getFieldErrors().get(0).getDefaultMessage();
