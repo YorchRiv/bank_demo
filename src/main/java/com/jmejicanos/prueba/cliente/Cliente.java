@@ -34,7 +34,7 @@ public class Cliente {
     
     @Column(name = "activo")    
     @NotNull(message =  "El campo activo es obligatorio")
-    private Boolean activo;
+    private Boolean activo = true;
     
     public Cliente(){
     }
