@@ -33,5 +33,47 @@ public class Usuarios {
 
     @Column(name = "activo")    
     @NotNull(message =  "El campo activo es obligatorio")
-    private Boolean activo = true;        
+    private Boolean activo = true;  
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public Integer getId_rol() {
+        return id_rol;
+    }
+
+    public void setId_rol(Integer id_rol) {
+        this.id_rol = id_rol;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getPassword_hash() {
+        return password_hash;
+    }
+
+    public void setPassword_hash(String password_hash) {
+        this.password_hash = password_hash;
+    }
+
+    public Boolean getActivo() {
+        return activo;
+    }
+
+    public void setActivo(Boolean activo) {
+        this.activo = activo;
+    }
+    
+    
 }

@@ -1,13 +1,17 @@
 
 package com.jmejicanos.prueba.transaccion;
 
+import jakarta.validation.Valid;
 import java.util.List;
 import java.util.Map;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -31,19 +35,11 @@ public class TransaccionesController {
         return ResponseEntity.ok(transaccion);
     }
     
-    /*@PostMapping("/transacciones")
-    public ResponseEntity<?> crearTransacciones(@Valid @RequestBody Transacciones nuevoTipoTransaccion){       
-        try{
-            Transacciones transaccionguardado = service.crearTransacciones(nuevoTipoTransaccion);
-            return ResponseEntity.status(HttpStatus.CREATED).body(transaccionguardado);
-        } catch (IllegalArgumentException e){
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(Map.of("mensaje:",e.getMessage()));
-        } catch (Exception e) {
-            e.printStackTrace();;
-            return ResponseEntity.internalServerError().body(Map.of("mensaje:","Ocurrio un error inesperado","error:",e.getMessage()));
-        }
-        
-    }     */
+    @PostMapping("/transacciones")
+    public ResponseEntity<Transacciones> realizarTransferencia(@Valid @RequestBody TransaccionesRequest request){       
+        Transacciones transaccion = service.realizarTransferencia(request);
+        return ResponseEntity.status(HttpStatus.CREATED).body(transaccion);
+    }    
     
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<?> manejarValidacion(MethodArgumentNotValidException e){
