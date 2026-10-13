@@ -22,6 +22,6 @@ public class ConexionSQLServer implements CommandLineRunner {
                 String.class
         );
 
-        System.out.println("Resultado SQL: " + resultado);
-    }
+        System.out.println("Resultado SQL: " + resultado);              
+    }        
 }
